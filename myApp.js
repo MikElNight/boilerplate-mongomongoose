@@ -16,15 +16,28 @@ const personSchema = new Schema({
 // Create Person model from the schema
 const Person = mongoose.model("Person", personSchema);
 /****************************************************/
-let Person;
-
+// Create and Save a Record of a Model
 const createAndSavePerson = (done) => {
-  done(null /*, data*/);
+  const luisFonseca = new Person( {name: "Luis", age: "40", favoriteFoods: "[Bolonhesa, Frango assado, Peixe grelhado]"} );
+  luisFonseca.save(function(err, data) {
+    if (err) return console.error(err);
+    done(null, data)
+  });
 };
-
+/****************************************************/
+// Create Many Records with model.create()
+let arrayOfPeople = [
+  {name: "Ruth", age: "36", favoriteFoods: "[Tofu a braz, Feijoada veggie]"},
+  {name: "Tony", age: "54", favoriteFoods: "[Arroz de pato, solha gralhada]"},
+  {name: "Cid", age: "62", favoriteFoods: "[Cozido, Rancho, Moelas]"}
+];
 const createManyPeople = (arrayOfPeople, done) => {
-  done(null /*, data*/);
+  Person.create(arrayOfPeople, function(err, people) {
+    if (err) return console.error(err);
+    else done(null, people);
+  });
 };
+/****************************************************/
 
 const findPeopleByName = (personName, done) => {
   done(null /*, data*/);
