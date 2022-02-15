@@ -38,48 +38,83 @@ const createManyPeople = (arrayOfPeople, done) => {
   });
 };
 /****************************************************/
-// Use model.find() to Search Database
+// Use model.find() to Search records from Database
 const findPeopleByName = (personName, done) => {
-  Person.find({name: personName}, function(err, personFound) {
+  Person.find(/*conditions*/{name: personName}, /*callback*/function(err, personFound) {
     if (err) return console.log(err);
     done(null, personFound);
   });
 };
-
+/****************************************************/
+// Use model.findOne() to Return a Single Matching Document from Database
 const findOneByFood = (food, done) => {
-  done(null /*, data*/);
+  Person.findOne(/*conditions*/{favoriteFoods: food}, /*callback*/function(err, personFound) {
+    if (err) return console.log(err);
+    done(null, personFound);
+  });
 };
-
+/****************************************************/
+// Use model.findById() to Search Database record from unique "_id"
 const findPersonById = (personId, done) => {
-  done(null /*, data*/);
+  Person.findById(/*conditions*/{_id: personId}, /*callback*/function(err, personFound) {
+    if (err) return console.log(err);
+    done(null, personFound);
+  });
 };
-
+/****************************************************/
+// Use .findById() method to find a person by _id and then UPDATE and SAVE new data
 const findEditThenSave = (personId, done) => {
-  const foodToAdd = "hamburger";
-
-  done(null /*, data*/);
+  Person.findById(/*conditions*/{_id: personId}, /*callback*/function(err, personFound) {
+    if (err) return console.log(err);
+    // Use array.push() method to add "hamburger" to the list of the person's favoriteFoods
+    personFound.favoriteFoods.push("hamburger");
+    // save() the updated Person.
+    personFound.save((err, updatedPerson) => {
+      if(err) return console.log(err);
+      done(null, updatedPerson);
+    })
+  });
 };
-
+/****************************************************/
+// Perform New Updates on a Document Using model.findOneAndUpdate()
 const findAndUpdate = (personName, done) => {
   const ageToSet = 20;
-
-  done(null /*, data*/);
+  Person.findOneAndUpdate(/*conditions*/{name: personName}, /*update*/{age: 20}, /*options*/{new: true}, /*callback*/(err, updatedDoc) => {
+    if(err) return console.log(err);
+    done(null, updatedDoc);
+  });
 };
-
+/****************************************************/
+// Delete One Document Using model.findByIdAndRemove
 const removeById = (personId, done) => {
-  done(null /*, data*/);
+  Person.findByIdAndRemove(/*conditions*/{_id: personId}, /*callback*/function(err, personFound) {
+    if (err) return console.log(err);
+    done(null, personFound);
+  });
 };
-
+/****************************************************/
+// Delete Many Documents with model.remove()
 const removeManyPeople = (done) => {
   const nameToRemove = "Mary";
-
-  done(null /*, data*/);
+  Person.remove(/*conditions*/{name: nameToRemove}, /*callback*/function(err, response) {
+    if (err) return console.log(err);
+    done(null, response);
+  });
 };
-
+/****************************************************/
 const queryChain = (done) => {
   const foodToSearch = "burrito";
-
-  done(null /*, data*/);
+  
+  // using .find() without the callback function, allows to define the query without executing it (it will be executed later with the ".exec()"
+  Person.find(/*conditions*/{favoriteFoods: foodToSearch})
+  // sort by Name
+  .sort({name: 'asc'}) // 1 for ascending / -1 for descending
+  // limit to 2 Documents
+  .limit(2)
+  // hide "age" field
+  .select('-age')    // .select(-age)
+  // execute query
+  .exec(function(err, searchResult) {done(err, searchResult)})
 };
 /****************************************************/
 /** **Well Done !!**
